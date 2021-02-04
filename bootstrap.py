@@ -6,7 +6,7 @@ import requests
 
 # Strings
 alpinedl = "https://dl-cdn.alpinelinux.org/alpine/v3.10/releases/armv7/alpine-minirootfs-3.10.5-armv7.tar.gz"
-buildsh = "#!/bin/sh\n\nmkdir -p /kobox/rootfs /kobox/sysroot\ncd /root\ngit clone https://github.com/Alpine-KoBox/core && cd /root/core/musl\n./configure --prefix=/kobox/sysroot\nmake install\ncd /root/core/busybox\nC_INCLUDE_PATH=/usr/include make install\ncd /kobox/rootfs\nmkdir -p bin dev etc home lib mnt opt proc root run sbin sys tmp usr var\ncd /root && apk fetch -R apk-tools-static && cd /kobox/rootfs\ntar -xpf /root/apk-tools-static-*.apk\ntar -xpf /minirootfs.tar.gz ./lib/apk && tar -xpf /minirootfs.tar.gz ./usr/share/apk && tar -xpf /minirootfs.tar.gz ./etc/apk && tar -xpf /minirootfs.tar.gz ./var/lib/apk && tar -xpf /minirootfs.tar.gz ./var/cache/apk && tar -xpf /minirootfs.tar.gz ./etc/passwd\ntar cJpf /mnt/rootfs.txz ./\n"
+buildsh = "#!/bin/sh\n\nmkdir -p /kobox/rootfs /kobox/sysroot\ncd /root\ngit clone https://github.com/Alpine-KoBox/core && cd /root/core/musl\n./configure --prefix=/kobox/sysroot\nmake install\ncd /root/core/busybox\nC_INCLUDE_PATH=/usr/include make install\ncd /kobox/rootfs\nmkdir -p bin dev etc home lib mnt opt proc root run sbin sys tmp usr var\ncd /root && apk fetch -R apk-tools-static && cd /kobox/rootfs\ntar -xpf /root/apk-tools-static-*.apk\ntar -xpf /minirootfs.tar.gz ./lib/apk && tar -xpf /minirootfs.tar.gz ./usr/share/apk && tar -xpf /minirootfs.tar.gz ./etc/apk && tar -xpf /minirootfs.tar.gz ./var/lib/apk && tar -xpf /minirootfs.tar.gz ./var/cache/apk && tar -xpf /minirootfs.tar.gz ./etc/passwd\ntar -xpf /minirootfs.tar.gz ./etc/group\ntar cJpf /mnt/rootfs.txz ./\n"
 
 print("\033[92;1m+++ KoBox bootstrapper. Sets up a basic environment with custom-built musl-libc and BusyBox, compatible with older kernel versions.\033[0m")
 
@@ -48,7 +48,7 @@ os.system("mount -t tmpfs tmpfs {0}/run".format(imgmnt))
 os.system("mkdir -p {0}/dev/shm".format(imgmnt))
 os.system("cp /etc/resolv.conf {0}/etc".format(imgmnt))
 
-# chroot and install Python3
+# chroot and install build essentials
 print("\033[94;1m--- Installing the staging system and required utilities...\033[0m")
 os.system("chroot {0} /sbin/apk 'add' 'alpine-sdk' 'binutils' 'linux-headers' 'xz'".format(imgmnt))
 
